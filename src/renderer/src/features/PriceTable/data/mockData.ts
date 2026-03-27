@@ -37,10 +37,22 @@ export const priceData = [
   },
   {
     id: 3,
-    categoria: "Acessórios Galvanizado Z100",
+    categoria: "Galvanizado Z100",
     produtos: [
       {
         id: 301,
+        descricao: "Lorem ipsum dolor sit amet.",
+        und: "UN",
+        valor: "R$ 99,99"
+      }
+    ]
+  },
+  {
+    id: 4,
+    categoria: "Acessórios",
+    produtos: [
+      {
+        id: 401,
         descricao: "Lorem ipsum dolor sit amet.",
         und: "UN",
         valor: "R$ 99,99"

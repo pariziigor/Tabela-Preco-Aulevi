@@ -1,44 +1,84 @@
 import { useState, useEffect } from 'react';
+import Papa from 'papaparse';
 import { MainLayout } from './layouts/MainLayout';
 import { PriceTable } from './features/PriceTable/components/PriceTable';
 import { CommercialConditions } from './features/Commercial/components/CommercialConditions';
 import { EditModal } from './components/Modal/EditModal';
-import { priceData as initialMockData } from './features/PriceTable/data/mockData';
 import { useExportPdf } from './features/Export/useExportPdf';
 
 function App(): JSX.Element {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [tableData, setTableData] = useState<any[]>([]);
+  const [commercialData, setCommercialData] = useState<any>({ valor: [], boleto: [], cartao: [] });
+  const [timestamp, setTimestamp] = useState("");
 
+  // Mantemos o mês no localStorage pois é uma preferência de exibição
   const [monthReference, setMonthReference] = useState(() => {
     return localStorage.getItem('@aulevi:monthReference') || "MARÇO 2026";
   });
 
-  const [tableData, setTableData] = useState(() => {
-    const savedTable = localStorage.getItem('@aulevi:tableData');
-    if (savedTable) {
-      try { return JSON.parse(savedTable); } catch (e) { console.error('Erro', e); }
-    }
-    return initialMockData;
-  });
+  // --- CONFIGURAÇÃO DOS LINKS ---
+  // Substitua pelos links CSV gerados em "Publicar na Web" no Google Sheets
+  const URL_PRODUTOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSFkpSAzKMyWN6urNZjiSzpm6sCzvZlBCJdLayfHaDQ3aHY9LvCVQkoPVFIJ-AIzjv9b26iyHKhOm13/pub?gid=0&single=true&output=csv";
+  const URL_CONDICOES = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSFkpSAzKMyWN6urNZjiSzpm6sCzvZlBCJdLayfHaDQ3aHY9LvCVQkoPVFIJ-AIzjv9b26iyHKhOm13/pub?gid=1325148737&single=true&output=csv";
 
-  const [commercialData, setCommercialData] = useState(() => {
-    const savedCommercial = localStorage.getItem('@aulevi:commercialData');
-    if (savedCommercial) {
-      try { return JSON.parse(savedCommercial); } catch (e) { console.error('Erro', e); }
-    }
-    return { valor: ["Até R$5.000,00"], boleto: ["15 DD"], cartao: ["1X"] };
-  });
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // 1. Busca Produtos
+        const resProd = await fetch(URL_PRODUTOS);
+        const csvProd = await resProd.text();
+        Papa.parse(csvProd, {
+          header: true,
+          skipEmptyLines: true,
+          complete: (results) => {
+            const grouped = (results.data as any[]).reduce((acc: any[], row: any) => {
+              if (!row.categoria) return acc;
+              let cat = acc.find(c => c.name === row.categoria);
+              if (!cat) {
+                cat = { id: crypto.randomUUID(), name: row.categoria, items: [] };
+                acc.push(cat);
+              }
+              cat.items.push({
+                id: crypto.randomUUID(),
+                description: row.descricao,
+                unit: row.unidade,
+                value: row.valor
+              });
+              return acc;
+            }, []);
+            setTableData(grouped);
+          }
+        });
 
-  const [timestamp, setTimestamp] = useState("");
+        // 2. Busca Condições Comerciais
+        const resCond = await fetch(URL_CONDICOES);
+        const csvCond = await resCond.text();
+        Papa.parse(csvCond, {
+          header: true,
+          skipEmptyLines: true,
+          complete: (results) => {
+            const rows = results.data as any[];
+            setCommercialData({
+              valor: rows.filter(r => r.tipo === 'valor').map(r => r.texto),
+              boleto: rows.filter(r => r.tipo === 'boleto').map(r => r.texto),
+              cartao: rows.filter(r => r.tipo === 'cartao').map(r => r.texto)
+            });
+          }
+        });
+      } catch (e) {
+        console.error("Erro ao carregar planilha:", e);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const updateTimestamp = () => {
       const now = new Date();
-      const date = now.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-      const time = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-      setTimestamp(`Esta tabela de preços foi gerada no dia ${date} às ${time}`);
+      setTimestamp(`Esta tabela de preços foi gerada no dia ${now.toLocaleDateString('pt-BR')} às ${now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`);
     };
-
     updateTimestamp();
     const interval = setInterval(updateTimestamp, 30000); 
     return () => clearInterval(interval);
@@ -46,17 +86,13 @@ function App(): JSX.Element {
 
   const { exportToPdf } = useExportPdf();
 
-  const handleSave = (newTable: any, newComm: any, newMonth: string) => {
-    setTableData(newTable);
-    setCommercialData(newComm);
+  const handleSave = (_newTable: any, _newComm: any, newMonth: string) => {
+    // Agora o save apenas atualiza o mês, pois os dados vêm da planilha
     setMonthReference(newMonth);
-
-    localStorage.setItem('@aulevi:tableData', JSON.stringify(newTable));
-    localStorage.setItem('@aulevi:commercialData', JSON.stringify(newComm));
     localStorage.setItem('@aulevi:monthReference', newMonth);
+    setIsModalOpen(false);
   };
 
-  // APENAS UM RETURN AGORA:
   return (
     <>
       <MainLayout
@@ -64,7 +100,7 @@ function App(): JSX.Element {
         onExportClick={() => exportToPdf(
           'documento-pdf',
           `Tabela_AULEVI_${monthReference.replace(' ', '_')}.pdf`,
-          `TABELA DE PREÇOS - ${monthReference}` // Passando o título para o PDF repetir
+          `TABELA DE PREÇOS - ${monthReference}`
         )}
         titleBlock={
           <div id="titulo-tabela" className="text-center bg-gray-100 py-3 rounded-md border border-gray-200 shadow-sm">
@@ -86,7 +122,6 @@ function App(): JSX.Element {
         </div>
       </MainLayout>
 
-      {/* O Modal agora está dentro do fragmento principal */}
       <EditModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -94,6 +129,7 @@ function App(): JSX.Element {
         currentCommercial={commercialData}
         currentMonth={monthReference} 
         onSave={handleSave}
+        isReadOnly={true} // Dica: adicione uma prop no seu Modal para avisar que a edição agora é via Sheets
       />
     </>
   );

@@ -12,15 +12,15 @@ export const useExportPdf = () => {
       const logoSrc = logoElement ? logoElement.src : null;
 
       const opt = {
-        margin: [10, 10, 15, 10], // Margem base pequena
+        margin: [40, 0, 20, 0], 
         filename: filename,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true, logging: false },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
         pagebreak: { mode: ['css', 'legacy'] }
       };
+      
 
-      // 1. Antes de gerar, vamos adicionar o espaçador nas quebras de página
       const worker = html2pdf().set(opt).from(element).toPdf();
 
       await worker.get('pdf').then((pdf: any) => {
@@ -31,12 +31,9 @@ export const useExportPdf = () => {
           pdf.setPage(i);
 
           if (i > 1) {
-            // --- TRUQUE: LIMPAR O TOPO DAS PÁGINAS SEGUINTES ---
-            // Desenha um retângulo branco para garantir que o conteúdo que subiu seja "apagado"
             pdf.setFillColor(255, 255, 255);
-            pdf.rect(0, 0, pageWidth, 28, 'F'); // Cobre os primeiros 28mm com branco
+            pdf.rect(0, 0, pageWidth, 28, 'F'); 
 
-            // --- DESENHA O CABEÇALHO ---
             const marginX = 10;
             const posY = 10;
 
