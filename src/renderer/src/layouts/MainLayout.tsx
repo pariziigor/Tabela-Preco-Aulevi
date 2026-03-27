@@ -1,4 +1,6 @@
 import React from 'react';
+// 1. Importe a imagem aqui (verifique se o nome e a extensão batem com o seu arquivo)
+import logoAulevi from '../assets/logo.png'; 
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -12,8 +14,15 @@ export const MainLayout = ({ children, onEditClick, onExportClick }: MainLayoutP
       
       <header className="flex justify-between items-start border-b-2 border-aulevi-orange pb-6 mb-8 mt-4">
         <div className="flex flex-col">
-          <h1 className="text-5xl font-black tracking-tighter text-aulevi-orange uppercase">AULEVI</h1>
-          <span className="text-sm font-semibold tracking-[0.2em] text-gray-500 uppercase mt-1">LIVING THE FUTURE</span>
+          {/* 2. Substituímos o h1 pela tag img */}
+          <img 
+            src={logoAulevi} 
+            alt="Logo AULEVI" 
+            className="h-14 object-contain" // Ajuste o 'h-14' (height) para maior ou menor se precisar
+          />
+          
+          {/* Obs: Se a sua imagem da logo já tiver o texto "LIVING THE FUTURE" embutido nela, 
+              você pode apagar a linha do <span> abaixo. Se a imagem for só o símbolo/nome, mantenha. */}
         </div>
         
         <div className="flex gap-3" data-html2canvas-ignore="true">
