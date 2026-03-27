@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Se quiser, já pode definir a cor de fundo padrão aqui */
+body {
+  @apply bg-gray-50 text-gray-900;
+}
