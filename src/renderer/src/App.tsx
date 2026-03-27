@@ -29,7 +29,6 @@ function App(): JSX.Element {
     return { valor: ["Até R$5.000,00"], boleto: ["15 DD"], cartao: ["1X"] };
   });
 
-
   const [timestamp, setTimestamp] = useState("");
 
   useEffect(() => {
@@ -47,7 +46,6 @@ function App(): JSX.Element {
 
   const { exportToPdf } = useExportPdf();
 
-  
   const handleSave = (newTable: any, newComm: any, newMonth: string) => {
     setTableData(newTable);
     setCommercialData(newComm);
@@ -55,16 +53,21 @@ function App(): JSX.Element {
 
     localStorage.setItem('@aulevi:tableData', JSON.stringify(newTable));
     localStorage.setItem('@aulevi:commercialData', JSON.stringify(newComm));
-    localStorage.setItem('@aulevi:monthReference', newMonth); // Salva para não perder
+    localStorage.setItem('@aulevi:monthReference', newMonth);
   };
 
+  // APENAS UM RETURN AGORA:
   return (
     <>
       <MainLayout
         onEditClick={() => setIsModalOpen(true)}
-        onExportClick={() => exportToPdf('documento-pdf', `Tabela_AULEVI_${monthReference.replace(' ', '_')}.pdf`)}
+        onExportClick={() => exportToPdf(
+          'documento-pdf',
+          `Tabela_AULEVI_${monthReference.replace(' ', '_')}.pdf`,
+          `TABELA DE PREÇOS - ${monthReference}` // Passando o título para o PDF repetir
+        )}
         titleBlock={
-          <div className="text-center bg-gray-100 py-3 rounded-md border border-gray-200 shadow-sm">
+          <div id="titulo-tabela" className="text-center bg-gray-100 py-3 rounded-md border border-gray-200 shadow-sm">
             <h2 className="text-xl font-black text-gray-800 uppercase tracking-widest">
               TABELA DE PREÇOS - {monthReference}
             </h2>
@@ -81,37 +84,9 @@ function App(): JSX.Element {
             </div>
           </div>
         </div>
-      </MainLayout>return (
-      <>
-        <MainLayout
-          onEditClick={() => setIsModalOpen(true)}
-          onExportClick={() => exportToPdf(
-            'documento-pdf',
-            `Tabela_AULEVI_${monthReference.replace(' ', '_')}.pdf`,
-            `TABELA DE PREÇOS - ${monthReference}`
-          )}
-          titleBlock={
-            <div className="text-center bg-gray-100 py-3 rounded-md border border-gray-200 shadow-sm">
-              <h2 className="text-xl font-black text-gray-800 uppercase tracking-widest">
-                TABELA DE PREÇOS - {monthReference}
-              </h2>
-            </div>
-          }
-        >
-          <div className="flex flex-col gap-6">
-            <PriceTable data={tableData} />
+      </MainLayout>
 
-            <div className="flex flex-col">
-              <CommercialConditions data={commercialData} />
-              <div className="text-[10px] text-gray-400 font-medium text-center mt-2 italic">
-                {timestamp}
-              </div>
-            </div>
-          </div>
-        </MainLayout>
-      </>
-      )
-
+      {/* O Modal agora está dentro do fragmento principal */}
       <EditModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
