@@ -1,50 +1,60 @@
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+import html2pdf from 'html2pdf.js';
 
 export const useExportPdf = () => {
-  const exportToPdf = async (elementId: string, filename: string) => {
+  const exportToPdf = async (elementId: string, filename: string, titleText?: string) => {
     const element = document.getElementById(elementId);
     if (!element) return;
 
+    const textoCabecalho = String(titleText || 'TABELA DE PREÇOS').toUpperCase();
+
     try {
-      const canvas = await html2canvas(element, {
-        scale: 3, 
-        useCORS: true,
-        logging: false,
-        backgroundColor: '#ffffff',
-        windowWidth: 1200, 
-        onclone: (clonedDoc) => {
-          const el = clonedDoc.getElementById(elementId);
-          if (el) {
-            el.style.width = '1024px';
-            el.style.minWidth = '1024px';
-            el.style.maxWidth = '1024px';
-            el.style.margin = '0'; 
-            
-            const allElements = el.getElementsByTagName('*');
-            for (let i = 0; i < allElements.length; i++) {
-              (allElements[i] as HTMLElement).style.boxShadow = 'none';
-            }
+      const logoElement = element.querySelector('header img') as HTMLImageElement;
+      const logoSrc = logoElement ? logoElement.src : null;
+
+      const opt = {
+        margin: [30, 10, 15, 10], 
+        filename: filename,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { 
+          scale: 2, 
+          useCORS: true, 
+          logging: false 
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['css', 'legacy'] }
+      };
+
+      const worker = html2pdf().set(opt).from(element).toPdf();
+
+      await worker.get('pdf').then((pdf: any) => {
+        const totalPages = pdf.internal.getNumberOfPages();
+        const pageWidth = pdf.internal.pageSize.getWidth();
+
+        for (let i = 1; i <= totalPages; i++) {
+          pdf.setPage(i);
+          
+          const marginX = 10;
+          const posY = 12;
+
+          if (logoSrc) {
+            pdf.addImage(logoSrc, 'PNG', marginX, posY, 42, 12);
           }
+
+          pdf.setFontSize(11);
+          pdf.setFont("helvetica", "bold");
+          pdf.setTextColor(60, 60, 60);
+          
+          const txtWidth = (pdf.getStringUnitWidth(textoCabecalho) * pdf.internal.getFontSize()) / pdf.internal.scaleFactor;
+          pdf.text(textoCabecalho, pageWidth - marginX - txtWidth, posY + 8);
+
+          pdf.setDrawColor(229, 122, 31); 
+          pdf.setLineWidth(0.6);
+          pdf.line(marginX, posY + 16, pageWidth - marginX, posY + 16);
         }
-      });
+      }).save();
 
-      const imgData = canvas.toDataURL('image/png', 1.0);
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4'
-      });
-
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save(filename);
-      
     } catch (error) {
-      console.error('Erro ao gerar o PDF:', error);
-      alert('Ocorreu um erro ao gerar o PDF.');
+      console.error('Erro na exportação:', error);
     }
   };
 
