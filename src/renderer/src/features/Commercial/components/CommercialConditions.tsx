@@ -11,7 +11,7 @@ export const CommercialConditions = ({ data }: CommercialProps): JSX.Element | n
     return items.map((item, index) => (
       <p 
         key={index} 
-        className="leading-tight py-2.5 border-b border-gray-200/80 last:border-0 w-full"
+        className="leading-tight py-1.5 border-b border-gray-100 last:border-0 w-full flex items-center justify-center min-h-[30px]"
       >
         {item}
       </p>

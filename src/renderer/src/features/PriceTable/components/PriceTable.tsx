@@ -20,20 +20,19 @@ export const PriceTable = ({ data }: PriceTableProps): JSX.Element => {
   }
 
   return (
-    <div className="w-full flex flex-col gap-4">
-      {/* Cabeçalho Fixo */}
-      <div className="flex w-full bg-[#E57A1F] text-white text-xs uppercase font-bold tracking-wider rounded-lg shadow-sm overflow-hidden">
-        <div className="w-3/12 px-4 py-3 flex items-center justify-center text-center">Categoria</div>
-        <div className="w-6/12 px-4 py-3 flex items-center justify-center text-center">Descrição do produto</div>
-        <div className="w-1/12 px-4 py-3 flex items-center justify-center text-center">UND</div>
-        <div className="w-2/12 px-4 py-3 flex items-center justify-center text-center">Valor</div>
+    <div className="w-full flex flex-col gap-3"> {/* Reduzi o gap entre categorias de 4 para 3 */}
+      {/* Cabeçalho Fixo - Reduzi py-3 para py-2 e fonte para text-[10px] */}
+      <div className="flex w-full bg-[#E57A1F] text-white text-[10px] uppercase font-bold tracking-wider rounded-lg shadow-sm overflow-hidden">
+        <div className="w-3/12 px-2 py-2 flex items-center justify-center text-center">Categoria</div>
+        <div className="w-6/12 px-2 py-2 flex items-center justify-center text-center">Descrição do produto</div>
+        <div className="w-1/12 px-2 py-2 flex items-center justify-center text-center">UND</div>
+        <div className="w-2/12 px-2 py-2 flex items-center justify-center text-center">Valor</div>
       </div>
 
-      <div className="flex flex-col gap-5 text-sm text-gray-800">
+      <div className="flex flex-col gap-3 text-[11px] text-gray-800"> {/* Fonte principal reduzida de sm para 11px */}
         {data.map((cat) => {
           const categoryName = cat.name || '';
           const isSteelFrame = categoryName.toUpperCase().includes('LIGHT STEEL FRAME');
-          // Nova constante para identificar o Perfil Stick
           const isPerfilStick = categoryName.toUpperCase().includes('PERFIL STICK');
           const isGalvanizado100 = categoryName.toUpperCase().includes('GALVANIZADO Z100');
           const allItems = cat.items || [];
@@ -45,91 +44,68 @@ export const PriceTable = ({ data }: PriceTableProps): JSX.Element => {
               )
             : allItems;
 
-          // Definimos a unidade única (Pega a unidade do primeiro item se existir)
           const commonUnit = allItems[0]?.unit || 'un';
 
           return (
             <div
               key={cat.id}
-              className="flex w-full bg-white border border-gray-200 rounded-lg shadow-md shadow-gray-200/80 overflow-hidden break-inside-avoid"
+              className="flex w-full bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden break-inside-avoid"
             >
-              {/* Coluna Categoria */}
-              <div className="w-3/12 flex items-center justify-center px-4 py-3 font-bold text-gray-900 text-center border-r border-gray-200 bg-gray-50/50">
-                <span>{renderText(categoryName)}</span>
+              {/* Coluna Categoria - Centralização Vertical/Horizontal */}
+              <div className="w-3/12 flex items-center justify-center px-3 py-2 font-bold text-gray-900 text-center border-r border-gray-200 bg-gray-50/50">
+                <span className="leading-tight">{renderText(categoryName)}</span>
               </div>
 
-              {/* Se for Steel Frame OU Perfil Stick, usamos o layout de coluna de unidade unificada */}
               {(isSteelFrame || isPerfilStick || isGalvanizado100) ? (
                 <div className="w-9/12 flex">
-                  {/* Lista de Descrições */}
                   <div className="w-2/3 flex flex-col border-r border-gray-200">
-                    {filteredItems.map((prod: any, index: number) => {
-                      const isLast = index === filteredItems.length - 1;
-                      return (
-                        <div key={prod.id} className="relative flex items-center justify-center px-4 py-3 text-center text-gray-600 leading-snug flex-1">
-                          <span>{renderText(prod.description)}</span>
-                          {!isLast && <div className="absolute bottom-0 left-8 right-8 border-b border-gray-200"></div>}
-                        </div>
-                      );
-                    })}
+                    {filteredItems.map((prod: any, index: number) => (
+                      <div key={prod.id} className={`relative flex items-center justify-center px-3 py-1.5 text-center text-gray-600 leading-tight flex-1 ${index !== filteredItems.length - 1 ? 'border-b border-gray-100' : ''}`}>
+                        <span>{renderText(prod.description)}</span>
+                      </div>
+                    ))}
                   </div>
 
-                  {/* Unidade Centralizada (Geral para a categoria) */}
-                  <div className="w-[11.11%] flex items-center justify-center px-2 py-3 text-center font-bold border-r border-gray-200">
+                  {/* Unidade Centralizada */}
+                  <div className="w-[11.11%] flex items-center justify-center px-1 py-2 text-center font-bold border-r border-gray-200 bg-white">
                     <span>{commonUnit}</span>
                   </div>
 
-                  {/* Coluna de Valores */}
-                  <div className="w-[22.22%] flex flex-col items-center justify-center text-center font-bold text-gray-900">
+                  <div className="w-[22.22%] flex flex-col items-center justify-center text-center font-bold text-gray-900 bg-white">
                     {isSteelFrame ? (
-                      /* Layout de faixa de peso para Steel Frame */
-                      <div className="flex flex-col gap-1 px-4 py-3">
-                        <span className="text-[10px] text-gray-500 uppercase tracking-wider">Abaixo de 1000kg</span>
-                        <span className="text-base text-gray-900 mb-1">
-                          {allItems.find((i: any) => i.description?.toLowerCase().includes('abaixo'))?.value || 'Consulte'}
-                        </span>
-                        <div className="w-3/4 border-b border-gray-200 my-1 self-center"></div>
-                        <span className="text-[10px] text-gray-500 uppercase tracking-wider mt-1">Acima de 1000kg</span>
-                        <span className="text-base text-gray-900">
-                          {allItems.find((i: any) => i.description?.toLowerCase().includes('acima'))?.value || 'Consulte'}
-                        </span>
+                      <div className="flex flex-col gap-0.5 px-2 py-2">
+                        <span className="text-[9px] text-gray-400 uppercase">Abaixo 1000kg</span>
+                        <span className="text-sm mb-1">{allItems.find((i: any) => i.description?.toLowerCase().includes('abaixo'))?.value || '-'}</span>
+                        <div className="w-full border-b border-gray-100 my-1"></div>
+                        <span className="text-[9px] text-gray-400 uppercase">Acima 1000kg</span>
+                        <span className="text-sm">{allItems.find((i: any) => i.description?.toLowerCase().includes('acima'))?.value || '-'}</span>
                       </div>
                     ) : (
-                      /* Layout de valores individuais para Perfil Stick, mas mantendo a UND unificada ao lado */
                       <div className="flex flex-col w-full h-full">
-                        {filteredItems.map((prod: any, index: number) => {
-                          const isLast = index === filteredItems.length - 1;
-                          return (
-                            <div key={prod.id} className="relative flex-1 flex items-center justify-center px-4 py-3 text-base">
-                              <span>{renderText(prod.value)}</span>
-                              {!isLast && <div className="absolute bottom-0 left-4 right-4 border-b border-gray-200"></div>}
-                            </div>
-                          );
-                        })}
+                        {filteredItems.map((prod: any, index: number) => (
+                          <div key={prod.id} className={`flex-1 flex items-center justify-center px-2 py-1.5 text-sm ${index !== filteredItems.length - 1 ? 'border-b border-gray-100' : ''}`}>
+                            <span>{prod.value}</span>
+                          </div>
+                        ))}
                       </div>
                     )}
                   </div>
                 </div>
               ) : (
-                /* Layout Padrão: Para as demais categorias (Acessórios, etc) */
                 <div className="w-9/12 flex flex-col">
-                  {filteredItems.map((prod: any, index: number) => {
-                    const isLast = index === filteredItems.length - 1;
-                    return (
-                      <div key={prod.id} className="relative flex w-full flex-1">
-                        <div className="w-2/3 flex items-center justify-center px-4 py-3 text-center text-gray-600 leading-snug">
-                          <span>{renderText(prod.description)}</span>
-                        </div>
-                        <div className="w-[11.11%] flex items-center justify-center px-2 py-3 text-center font-medium border-l border-gray-200">
-                          <span>{renderText(prod.unit)}</span>
-                        </div>
-                        <div className="w-[22.22%] flex items-center justify-center px-4 py-3 text-center font-bold text-gray-900 text-base border-l border-gray-200">
-                          <span>{renderText(prod.value)}</span>
-                        </div>
-                        {!isLast && <div className="absolute bottom-0 left-8 right-8 border-b border-gray-200"></div>}
+                  {filteredItems.map((prod: any, index: number) => (
+                    <div key={prod.id} className={`flex w-full flex-1 ${index !== filteredItems.length - 1 ? 'border-b border-gray-100' : ''}`}>
+                      <div className="w-2/3 flex items-center justify-center px-3 py-1.5 text-center text-gray-600 leading-tight">
+                        <span>{renderText(prod.description)}</span>
                       </div>
-                    );
-                  })}
+                      <div className="w-[11.11%] flex items-center justify-center px-1 py-1.5 text-center font-medium border-l border-gray-200">
+                        <span>{prod.unit}</span>
+                      </div>
+                      <div className="w-[22.22%] flex items-center justify-center px-3 py-1.5 text-center font-bold text-gray-900 text-sm border-l border-gray-200">
+                        <span>{prod.value}</span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
