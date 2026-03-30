@@ -5,7 +5,6 @@ interface PriceTableProps {
 }
 
 export const PriceTable = ({ data }: PriceTableProps): JSX.Element => {
-  // Renderização de texto com suporte a quebra de linha e segurança contra nulos
   const renderText = (text: any) => {
     if (!text || typeof text !== 'string') return '';
     return text.split('\n').map((str, index, array) => (
@@ -31,20 +30,23 @@ export const PriceTable = ({ data }: PriceTableProps): JSX.Element => {
       </div>
 
       <div className="flex flex-col gap-5 text-sm text-gray-800">
-
-        
         {data.map((cat) => {
           const categoryName = cat.name || '';
           const isSteelFrame = categoryName.toUpperCase().includes('LIGHT STEEL FRAME');
+          // Nova constante para identificar o Perfil Stick
+          const isPerfilStick = categoryName.toUpperCase().includes('PERFIL STICK');
+          const isGalvanizado100 = categoryName.toUpperCase().includes('GALVANIZADO Z100');
           const allItems = cat.items || [];
           
-          // Filtra a lista central para NÃO mostrar as linhas de "Abaixo/Acima de 1000kg"
           const filteredItems = isSteelFrame 
             ? allItems.filter((item: any) => 
                 !item.description?.toLowerCase().includes('abaixo de') && 
                 !item.description?.toLowerCase().includes('acima de')
               )
             : allItems;
+
+          // Definimos a unidade única (Pega a unidade do primeiro item se existir)
+          const commonUnit = allItems[0]?.unit || 'un';
 
           return (
             <div
@@ -56,10 +58,10 @@ export const PriceTable = ({ data }: PriceTableProps): JSX.Element => {
                 <span>{renderText(categoryName)}</span>
               </div>
 
-              {isSteelFrame ? (
-                /* Layout Especial: Steel Frame Engenheirado */
+              {/* Se for Steel Frame OU Perfil Stick, usamos o layout de coluna de unidade unificada */}
+              {(isSteelFrame || isPerfilStick || isGalvanizado100) ? (
                 <div className="w-9/12 flex">
-                  {/* Lista de Produtos (Filtrada) */}
+                  {/* Lista de Descrições */}
                   <div className="w-2/3 flex flex-col border-r border-gray-200">
                     {filteredItems.map((prod: any, index: number) => {
                       const isLast = index === filteredItems.length - 1;
@@ -72,28 +74,44 @@ export const PriceTable = ({ data }: PriceTableProps): JSX.Element => {
                     })}
                   </div>
 
-                  {/* Unidade Fixa */}
+                  {/* Unidade Centralizada (Geral para a categoria) */}
                   <div className="w-[11.11%] flex items-center justify-center px-2 py-3 text-center font-bold border-r border-gray-200">
-                    <span>KG</span>
+                    <span>{commonUnit}</span>
                   </div>
 
-                  {/* Quadro de Valores Laterais (Busca direto no array completo da planilha) */}
-                  <div className="w-[22.22%] flex flex-col items-center justify-center px-4 py-3 text-center font-bold text-gray-900 gap-1">
-                    <span className="text-[10px] text-gray-500 uppercase tracking-wider">Abaixo de 1000kg</span>
-                    <span className="text-base text-gray-900 mb-1">
-                      {allItems.find((i: any) => i.description?.toLowerCase().includes('abaixo'))?.value || 'Consulte'}
-                    </span>
-
-                    <div className="w-3/4 border-b border-gray-200 my-1"></div>
-
-                    <span className="text-[10px] text-gray-500 uppercase tracking-wider mt-1">Acima de 1000kg</span>
-                    <span className="text-base text-gray-900">
-                      {allItems.find((i: any) => i.description?.toLowerCase().includes('acima'))?.value || 'Consulte'}
-                    </span>
+                  {/* Coluna de Valores */}
+                  <div className="w-[22.22%] flex flex-col items-center justify-center text-center font-bold text-gray-900">
+                    {isSteelFrame ? (
+                      /* Layout de faixa de peso para Steel Frame */
+                      <div className="flex flex-col gap-1 px-4 py-3">
+                        <span className="text-[10px] text-gray-500 uppercase tracking-wider">Abaixo de 1000kg</span>
+                        <span className="text-base text-gray-900 mb-1">
+                          {allItems.find((i: any) => i.description?.toLowerCase().includes('abaixo'))?.value || 'Consulte'}
+                        </span>
+                        <div className="w-3/4 border-b border-gray-200 my-1 self-center"></div>
+                        <span className="text-[10px] text-gray-500 uppercase tracking-wider mt-1">Acima de 1000kg</span>
+                        <span className="text-base text-gray-900">
+                          {allItems.find((i: any) => i.description?.toLowerCase().includes('acima'))?.value || 'Consulte'}
+                        </span>
+                      </div>
+                    ) : (
+                      /* Layout de valores individuais para Perfil Stick, mas mantendo a UND unificada ao lado */
+                      <div className="flex flex-col w-full h-full">
+                        {filteredItems.map((prod: any, index: number) => {
+                          const isLast = index === filteredItems.length - 1;
+                          return (
+                            <div key={prod.id} className="relative flex-1 flex items-center justify-center px-4 py-3 text-base">
+                              <span>{renderText(prod.value)}</span>
+                              {!isLast && <div className="absolute bottom-0 left-4 right-4 border-b border-gray-200"></div>}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 </div>
               ) : (
-                /* Layout Padrão: Demais Categorias */
+                /* Layout Padrão: Para as demais categorias (Acessórios, etc) */
                 <div className="w-9/12 flex flex-col">
                   {filteredItems.map((prod: any, index: number) => {
                     const isLast = index === filteredItems.length - 1;
