@@ -3,7 +3,7 @@ import { CommercialConditions } from '../Commercial/components/CommercialConditi
 
 export const PdfDocument = ({ tableData, commercialData, monthReference, timestamp }: any) => {
   return (
-    <div className="p-6 bg-white text-gray-800">
+    <div className="pt-2 px-6 pb-4 bg-white text-gray-800">
       <div className="pdf-header">
         <div className="flex justify-center mb-2">
           <img src="logo-aulevi.png" style={{ height: 35 }} />

@@ -22,7 +22,7 @@ export async function generatePdf(html: string): Promise<Buffer> {
     printBackground: true,
 
     margin: {
-      top: '60px',
+      top: '80px',
       bottom: '35px',
       left: '20px',
       right: '20px'
@@ -33,14 +33,14 @@ export async function generatePdf(html: string): Promise<Buffer> {
     headerTemplate: `
   <div style="
     width:100%;
-    font-size:10px;
+    font-size:20px;
     padding:0 20px;
     display:flex;
     justify-content:space-between;
     align-items:center;
   ">
     <div style="display:flex; align-items:center; gap:8px;">
-      <img src="${logoSrc}" style="height:20px;" />
+      <img src="${logoSrc}" style="height:40px;" />
     </div>
 
     <span>Tabela de Preços - AULEVI</span>
