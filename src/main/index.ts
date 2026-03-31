@@ -2,6 +2,7 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { generatePdf } from './services/pfd/service'
 
 function createWindow(): void {
   // Create the browser window.
@@ -24,6 +25,16 @@ function createWindow(): void {
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
     return { action: 'deny' }
+  })
+
+  ipcMain.handle('generate-pdf', async (_, html: string) => {
+    try {
+      const pdfBuffer = await generatePdf(html)
+      return pdfBuffer
+    } catch (error) {
+      console.error('Erro ao gerar PDF:', error)
+      throw error
+    }
   })
 
   // HMR for renderer base on electron-vite cli.
