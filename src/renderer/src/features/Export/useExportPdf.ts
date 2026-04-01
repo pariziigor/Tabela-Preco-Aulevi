@@ -5,7 +5,11 @@ export function useExportPdf() {
     try {
       const html = renderPdfHtml(props);
 
-      const pdfBuffer = await window.electronAPI.generatePdf(html);
+      // 🔥 MONTA O TÍTULO CORRETO
+      const title = `TABELA DE PREÇOS - ${props.monthReference}`;
+
+      // 🔥 ENVIA HTML + TITLE
+      const pdfBuffer = await window.electronAPI.generatePdf(html, title);
 
       const blob = new Blob([pdfBuffer], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);

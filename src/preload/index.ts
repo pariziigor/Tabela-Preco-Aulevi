@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import { title } from 'process';
 
 // Custom APIs for renderer
 const api = {}
@@ -8,7 +9,7 @@ const api = {}
 // renderer only if context isolation is enabled, otherwise
 // just add to the DOM global.
 contextBridge.exposeInMainWorld('electronAPI', {
-  generatePdf: (html: string) => ipcRenderer.invoke('generate-pdf', html),
+  generatePdf: (html: string, title: string) => ipcRenderer.invoke('generate-pdf', html, title),
 });
 
 if (process.contextIsolated) {

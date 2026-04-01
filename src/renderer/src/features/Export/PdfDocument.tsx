@@ -8,12 +8,6 @@ export const PdfDocument = ({ tableData, commercialData, monthReference, timesta
         <div className="flex justify-center mb-2">
           <img src="logo-aulevi.png" style={{ height: 35 }} />
         </div>
-
-        <div className="text-center">
-          <h2 className="text-xl font-black tracking-widest">
-            TABELA DE PREÇOS - {monthReference}
-          </h2>
-        </div>
       </div>
 
       <div className="mb-6">

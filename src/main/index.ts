@@ -27,9 +27,9 @@ function createWindow(): void {
     return { action: 'deny' }
   })
 
-  ipcMain.handle('generate-pdf', async (_, html: string) => {
+  ipcMain.handle('generate-pdf', async (_, html, title: string) => {
     try {
-      const pdfBuffer = await generatePdf(html)
+      const pdfBuffer = await generatePdf(html, title)
       return pdfBuffer
     } catch (error) {
       console.error('Erro ao gerar PDF:', error)
