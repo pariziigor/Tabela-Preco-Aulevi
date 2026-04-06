@@ -887,7 +887,7 @@ h2 {
   margin: 6px 0 2px 0;
   font-size: 12px;
   font-weight: 700;
-  margin-top: 2px;   /* 🔥 reduz espaço acima */
+  margin-top: 2px;   
   margin-bottom: 4px;
 }
 
@@ -961,4 +961,9 @@ li {
 
 * {
   -webkit-print-color-adjust: exact;
+}
+
+.table-block {
+  page-break-inside: avoid;
+  break-inside: avoid;
 }

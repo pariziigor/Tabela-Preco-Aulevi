@@ -50,6 +50,9 @@ export const CommercialConditions = ({ data }: CommercialProps): JSX.Element | n
       <div className="bg-gray-50 border-t border-gray-300 p-2 text-[10px] text-gray-500 font-medium italic text-center">
         Obs: Valores a prazo sujeitos à aprovação do departamento financeiro. Pagamento em cartão sujeito a inserção de taxas.
       </div>
+      <div className="bg-gray-50 border-t border-gray-300 p-2 text-[10px] text-gray-500 font-medium italic text-center">
+        Obs: Os valores dos produtos estão sujeitos a alterações e ajustes conforme definição do departamento comercial.
+      </div>
     </div>
   );
 };

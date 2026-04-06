@@ -18,11 +18,11 @@ export async function generatePdf(html: string, title: string): Promise<Buffer> 
 
   const pdf = await page.pdf({
     format: 'A4',
-    landscape: false, // 🔥 paisagem automático
+    landscape: false, 
     printBackground: true,
 
     margin: {
-      top: '80px',
+      top: '90px',
       bottom: '35px',
       left: '20px',
       right: '20px'
