@@ -1,8 +1,12 @@
-import { ElectronAPI } from '@electron-toolkit/preload'
+export interface CustomElectronAPI {
+  generatePdf: (html: string, title?: string) => Promise<Uint8Array>;
+  process: {
+    versions: NodeJS.ProcessVersions;
+  };
+}
 
 declare global {
   interface Window {
-    electron: ElectronAPI
-    api: unknown
+    electron: CustomElectronAPI;
   }
 }
