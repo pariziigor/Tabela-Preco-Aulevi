@@ -4,7 +4,7 @@ const logoSrc =
 
 export async function generatePdf(html: string, title: string): Promise<Buffer> {
   const browser = await puppeteer.launch({
-    headless: 'new',
+    headless: true,
     args: ['--no-sandbox']
   })
 
@@ -98,5 +98,5 @@ export async function generatePdf(html: string, title: string): Promise<Buffer> 
 
   await browser.close()
 
-  return pdf
+  return Buffer.from(pdf)
 }

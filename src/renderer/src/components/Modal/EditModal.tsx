@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export const EditModal = ({ isOpen, onClose, currentData, currentCommercial, currentMonth, onSave }: any): JSX.Element | null => {
+export const EditModal = ({ isOpen, onClose, currentData, currentCommercial, currentMonth, onSave }: any): React.ReactElement | null => {
   // Agora usamos 'name' e 'items' que vêm da planilha
   const [formData, setFormData] = useState(currentData || []);
   const [commercial, setCommercial] = useState(currentCommercial || { valor: [''], boleto: [''], cartao: [''] });
@@ -15,11 +15,6 @@ export const EditModal = ({ isOpen, onClose, currentData, currentCommercial, cur
   if (!isOpen) return null;
 
   // --- FUNÇÕES DE AJUSTE PARA A NOVA ESTRUTURA (Planilha) ---
-  const handleProductChange = (catId: string, prodId: string, field: string, value: string) => {
-    setFormData(formData.map((cat: any) => cat.id === catId ? {
-      ...cat, items: cat.items.map((p: any) => p.id === prodId ? { ...p, [field]: value } : p)
-    } : cat));
-  };
 
   const handleCommChange = (field: 'valor' | 'boleto' | 'cartao', index: number, value: string) => {
     const newItems = [...commercial[field]];

@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import logoAulevi from '../assets/logo.png';
 
 interface MainLayoutProps {
@@ -8,7 +8,7 @@ interface MainLayoutProps {
   titleBlock?: ReactNode; 
 }
 
-export const MainLayout = ({ children, onEditClick, onExportClick, titleBlock }: MainLayoutProps): JSX.Element => {
+export const MainLayout = ({ children, onEditClick, onExportClick, titleBlock }: MainLayoutProps): React.ReactElement => {
   return (
     <div id="documento-pdf" className="min-h-screen flex flex-col bg-white text-gray-900 font-sans p-8 max-w-5xl mx-auto">
       

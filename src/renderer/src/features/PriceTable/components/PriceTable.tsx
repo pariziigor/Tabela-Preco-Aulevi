@@ -4,7 +4,7 @@ interface PriceTableProps {
   data: any[];
 }
 
-export const PriceTable = ({ data }: PriceTableProps): JSX.Element => {
+export const PriceTable = ({ data }: PriceTableProps): React.ReactElement => {
   const renderText = (text: any) => {
     if (!text || typeof text !== 'string') return '';
     return text.split('\n').map((str, index, array) => (

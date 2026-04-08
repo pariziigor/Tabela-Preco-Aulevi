@@ -6,7 +6,7 @@ import { CommercialConditions } from './features/Commercial/components/Commercia
 import { EditModal } from './components/Modal/EditModal';
 import { useExportPdf } from './features/Export/useExportPdf';
 
-function App(): JSX.Element {
+function App(): React.ReactElement {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tableData, setTableData] = useState<any[]>([]);
   const [commercialData, setCommercialData] = useState<any>({ valor: [], boleto: [], cartao: [] });

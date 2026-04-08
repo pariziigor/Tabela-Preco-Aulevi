@@ -1,7 +1,7 @@
 import { PriceTable } from '../PriceTable/components/PriceTable'
 import { CommercialConditions } from '../Commercial/components/CommercialConditions'
 
-export const PdfDocument = ({ tableData, commercialData, monthReference, timestamp }: any) => {
+export const PdfDocument = ({ tableData, commercialData, timestamp }: any) => {
   return (
     <div className="pt-2 px-6 pb-4 bg-white text-gray-800">
       <div className="pdf-header">

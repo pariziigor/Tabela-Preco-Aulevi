@@ -9,7 +9,7 @@ export function useExportPdf() {
       const title = `TABELA DE PREÇOS - ${props.monthReference}`;
 
       // 🔥 ENVIA HTML + TITLE
-      const pdfBuffer = await window.electronAPI.generatePdf(html, title);
+      const pdfBuffer = await window.electron.generatePdf(html, title);
 
       const blob = new Blob([pdfBuffer], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);

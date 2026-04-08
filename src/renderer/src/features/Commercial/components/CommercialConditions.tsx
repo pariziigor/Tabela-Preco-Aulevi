@@ -1,10 +1,8 @@
-import React from 'react';
-
 interface CommercialProps {
   data: { valor: string[]; boleto: string[]; cartao: string[]; };
 }
 
-export const CommercialConditions = ({ data }: CommercialProps): JSX.Element | null => {
+export const CommercialConditions = ({ data }: CommercialProps): React.ReactElement | null => {
   if (!data) return null;
 
   const renderList = (items: string[]) => {
