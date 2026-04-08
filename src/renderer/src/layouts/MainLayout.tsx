@@ -36,7 +36,7 @@ export const MainLayout = ({ children, onEditClick, onExportClick, titleBlock }:
               onClick={onEditClick}
               className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-md font-semibold text-sm transition-colors border border-gray-300 shadow-sm"
             >
-              Alterar Dados
+              Alterar Mês
             </button>
 
             <button
